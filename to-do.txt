@@ -1,0 +1,13 @@
+- more testmaps
+- steps counter
+- collectable counter
+- exit game with no leaks
+- error handling
+- big map handling / scroll view
+- rezising handling
+- key hold
+- cleaning up
+- spliting the walking way, 4times update for movement
+- standing state character
+- bildschirm größe == max map größe
+- 
