@@ -1,39 +1,37 @@
 #include "../so_long.h"
 
-char	explore_surroundings(char c)
+char	explore_surroundings(char c, t_map *map)
 {
+	printf("COUNTER: %i\n", map->testcounter);
+	if (c == 'C' || c == 'E')
+		map->testcounter += 1;
 	if (c == '0' || c == 'C' || c == 'E')
 		return (c);
 	return ('1');
 }
 
-int	pathfinder(char **visited, int c, int i, int counter)
+void	pathfinder(char **visited, int c, int i, t_map *map)
 {
 	char	checking_top;
 	char	checking_bot;
 	char	checking_left;
 	char	checking_right;
 
-	checking_top = explore_surroundings(visited[c - 1][i]);
-	counter += counter_check(checking_top);
+	checking_top = explore_surroundings(visited[c - 1][i], map);
 	if (checking_top == '0' || checking_top == 'C' || checking_top == 'E')
 		visited[c - 1][i] = 'V';
-	checking_bot = explore_surroundings(visited[c + 1][i]);
-	counter += counter_check(checking_bot);
+	checking_bot = explore_surroundings(visited[c + 1][i], map);
 	if (checking_bot == '0' || checking_bot == 'C' || checking_bot == 'E')
 		visited[c + 1][i] = 'V';
-	checking_left = explore_surroundings(visited[c][i - 1]);
-	counter += counter_check(checking_left);
+	checking_left = explore_surroundings(visited[c][i - 1], map);
 	if (checking_left == '0' || checking_left == 'C' || checking_left == 'E')
 		visited[c][i - 1] = 'V';
-	checking_right = explore_surroundings(visited[c][i + 1]);
-	counter += counter_check(checking_right);
+	checking_right = explore_surroundings(visited[c][i + 1], map);
 	if (checking_right == '0' || checking_right == 'C' || checking_right == 'E')
 		visited[c][i + 1] = 'V';
-	return (counter);
 }
 
-int	deadend(char **visited, int c, int i)
+int	deadend(char **visited, int c, int i, t_map *map)
 {
 	char	checking_top;
 	char	checking_bottom;
@@ -49,17 +47,14 @@ int	deadend(char **visited, int c, int i)
 		&& (checking_left == '1' || checking_left == 'V')
 		&& (checking_right == '1' || checking_right == 'V'))
 		return (1);
+	pathfinder(visited, c, i, map);
 	return (0);
 }
 
-int	iterate_map(char **visited, t_map *map)
+int	iterate_map(char **visited, t_map *map, int i, int c)
 {
-	int	counter;
-	int	dead_ends;
-	int	c;
-	int	i;
+	int dead_ends;
 
-	counter = 0;
 	dead_ends = 1;
 	while (dead_ends != 0)
 	{
@@ -71,26 +66,27 @@ int	iterate_map(char **visited, t_map *map)
 			while (i < map->collums - 1)
 			{
 				if (visited[c][i] == 'V')
-				{
-					if (!deadend(visited, c, i))
-					{
-						counter = pathfinder(visited, c, i, counter);
+					if (!deadend(visited, c, i, map))
 						dead_ends = 1;
-					}
-				}
-				if (counter == (map->collectables + 1))
-					return (1);
 				i++;
 			}
 			c++;
 		}
 	}
+	if (map->testcounter == (map->collectables + 1))
+		return (1);
 	return (0);
 }
 
 int	solve_level(char **visited, t_map *map)
 {
-	if (iterate_map(visited, map))
+	int	i;
+	int	c;
+
+	i = 0;
+	c = 0;
+	map->testcounter = 0;
+	if (iterate_map(visited, map, i, c))
 		return (1);
 	freevisited(visited, map);
 	freemap(map);

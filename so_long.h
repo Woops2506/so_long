@@ -22,6 +22,7 @@ typedef struct s_map
 	int			rows;
 	int			collums;
 	int			collectables;
+	int			testcounter;
 }	t_map;
 
 typedef struct s_player
@@ -83,14 +84,11 @@ int				line_check(t_map *map);
 int				wall_check(t_map *map);
 
 //solve_level
-char			explore_surroundings(char c);
-int				pathfinder(char **visited, int c, int i, int counter);
-int				deadend(char **visited, int c, int i);
-int				iterate_map(char **visited, t_map *map);
+char			explore_surroundings(char c, t_map *map);
+void			pathfinder(char **visited, int c, int i, t_map *map);
+int				deadend(char **visited, int c, int i, t_map *map);
+int				iterate_map(char **visited, t_map *map, int i, int c);
 int				solve_level(char **visited, t_map *map);
-
-//solve_level2
-int				counter_check(char c);
 
 //freemem
 void			freevisited(char **visited, t_map *map);
